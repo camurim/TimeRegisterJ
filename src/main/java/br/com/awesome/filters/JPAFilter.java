@@ -53,17 +53,14 @@ public class JPAFilter implements Filter {
 		chain.doFilter(request, response);
  
 		try {
- 
 			/*SE NÃO TIVER ERRO NA OPERAÇÃO ELE EXECUTA O COMMIT*/
 			entityManager.getTransaction().commit();
  
 		} catch (Exception e) {
- 
 			/*SE TIVER ERRO NA OPERAÇÃO É EXECUTADO O rollback*/
 			entityManager.getTransaction().rollback();
 		}
 		finally{
- 
 			/*DEPOIS DE DAR O COMMIT OU ROLLBACK ELE FINALIZA O entityManager*/
 			entityManager.close();
 		}
