@@ -38,19 +38,12 @@ public class GenericController <T extends AbstractModel<T>, Y extends GenericRep
 		}
 	}
 	
-	public String save() {
-		try {
-			this.repository.saveOrUpdate(this.model);
-		} catch (IllegalArgumentException | TransactionRequiredException e) {
-		}
-		return "";
+	public void save() {
+		this.repository.saveOrUpdate(this.model);
 	}
 	
 	public void delete() {
-		try {
-			this.repository.delete(model);
-		} catch (IllegalArgumentException | TransactionRequiredException e) {
-		}
+		this.repository.delete(model);
 	}
 	
 	public List<T> getListData() {
@@ -99,12 +92,12 @@ public class GenericController <T extends AbstractModel<T>, Y extends GenericRep
 	public void setModel(T model) {
 		this.model = model;
 	}
+
+	public T getFilter() {
+		return this.filter;
+	}
 	
 	public void setFilter(T filter) {
 		this.filter = filter;
-	}
-	
-	public T getFilter() {
-		return this.filter;
 	}
 }
