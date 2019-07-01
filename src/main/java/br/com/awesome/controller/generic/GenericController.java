@@ -38,11 +38,11 @@ public class GenericController <T extends AbstractModel<T>, Y extends GenericRep
 		}
 	}
 	
-	public void save() {
+	public void save() throws IllegalArgumentException, TransactionRequiredException {
 		this.repository.saveOrUpdate(this.model);
 	}
 	
-	public void delete() {
+	public void delete() throws IllegalArgumentException, TransactionRequiredException {
 		this.repository.delete(model);
 	}
 	
