@@ -65,22 +65,6 @@ public class GenericController <T extends AbstractModel<T>, Y extends GenericRep
 		return this.listData;
 	}
 	
-	public T getModel() {
-		return this.model;
-	}
-	
-	public void setModel(T model) {
-		this.model = model;
-	}
-	
-	public void setFilter(T filter) {
-		this.filter = filter;
-	}
-	
-	public T getFilter() {
-		return this.filter;
-	}
-		
 	public void clear() throws InstantiationException, IllegalAccessException {
 		listData = new ArrayList<T>();
 		model = this.modelClass.newInstance();
@@ -100,5 +84,24 @@ public class GenericController <T extends AbstractModel<T>, Y extends GenericRep
 	private Y findRepo(String repoName) throws ClassNotFoundException {
 		String fullQualifiedName = "br.com.awesome.repository." + repoName;
 		return (Y) CDI.current().select(Class.forName(fullQualifiedName)).get();
+	}
+	
+	//---------------------------------------------------------------------------------
+	// Getter's & Setter's
+	
+	public T getModel() {
+		return this.model;
+	}
+	
+	public void setModel(T model) {
+		this.model = model;
+	}
+	
+	public void setFilter(T filter) {
+		this.filter = filter;
+	}
+	
+	public T getFilter() {
+		return this.filter;
 	}
 }
