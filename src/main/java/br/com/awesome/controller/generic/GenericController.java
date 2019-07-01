@@ -72,6 +72,9 @@ public class GenericController <T extends AbstractModel<T>, Y extends GenericRep
 		fetchAll = true;
 	}
 	
+	//---------------------------------------------------------------------------------
+	// Private methods
+	
 	private void injectRepository() throws ClassNotFoundException {
 		Class<?> cl = this.getClass();
 		if (cl.isAnnotationPresent(JpaRepository.class)) {
