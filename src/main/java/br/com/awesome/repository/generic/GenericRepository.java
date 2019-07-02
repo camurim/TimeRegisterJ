@@ -110,7 +110,6 @@ public class GenericRepository<M extends AbstractModel, E extends AbstractEntity
 		}
 
 		TypedQuery<E> query = getEntityManager().createQuery(sb.toString(), this.entityClass);
-		
 		List<E> listEntity = query.getResultList();
 		
 		@SuppressWarnings("unchecked")
