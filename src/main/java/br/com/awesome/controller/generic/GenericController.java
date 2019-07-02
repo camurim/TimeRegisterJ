@@ -20,7 +20,6 @@ public class GenericController <M extends AbstractModel, E extends AbstractEntit
 	private static final long serialVersionUID = 1L;
 	
 	protected M model, filter;
-	protected R repo;
 	protected List<M> listData;
 	protected List<M> suggestions;
 	protected boolean fetchAll;
