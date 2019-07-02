@@ -108,8 +108,8 @@ public class EntityUtils {
 			List<String> fieldAnnotated = getClassTransientFields(clSource);
 
 			for (Method mSource : clSource.getMethods()) {
-				if (!fieldAnnotated.contains(methodToField(mSource.getName())) && !mSource.getName().equals("getClass")
-						&& methodExists(mSource.getName(), clTarget)) {
+				if (!fieldAnnotated.contains(methodToField(mSource.getName()))
+						&& !mSource.getName().equals("getClass")) {
 					if (mSource.getName().substring(0, 3).equals("get")
 							|| mSource.getName().substring(0, 2).equals("is")) {
 						if (mSource.invoke(eSource) != null) {
@@ -185,7 +185,8 @@ public class EntityUtils {
 		List<String> fieldAnnotated = getClassTransientFields(clSource);
 
 		for (Method mSource : clSource.getDeclaredMethods()) {
-			if (!fieldAnnotated.contains(methodToField(mSource.getName()))) {
+			if (!fieldAnnotated.contains(methodToField(mSource.getName()))
+					&& methodExists(mSource.getName(), clTarget)) {
 				if (mSource.getName().substring(0, 3).equals("get") || mSource.getName().substring(0, 2).equals("is")) {
 					if (mSource.invoke(entity) != null) {
 
@@ -223,7 +224,7 @@ public class EntityUtils {
 
 		return entity;
 	}
-	
+
 	public static AbstractModel convert2Model(final AbstractEntity entity)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException,
 			SecurityException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
