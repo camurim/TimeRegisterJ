@@ -213,7 +213,7 @@ public class EntityUtils {
 		}
 	}
 
-	public static AbstractEntity convertToEntity(final AbstractModel model)
+	public static AbstractEntity convert2Entity(final AbstractModel model)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException,
 			SecurityException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
 		final Class<?> cl = model.getClass();
@@ -224,7 +224,7 @@ public class EntityUtils {
 		return entity;
 	}
 	
-	public static AbstractModel convertToModel(final AbstractEntity entity)
+	public static AbstractModel convert2Model(final AbstractEntity entity)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException,
 			SecurityException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
 		final Class<?> cl = entity.getClass();
@@ -235,7 +235,7 @@ public class EntityUtils {
 		return model;
 	}
 
-	public static AbstractEntity model2Entity(final Class<?> cl)
+	private static AbstractEntity model2Entity(final Class<?> cl)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		final String fqn = "br.com.awesome.repository.entity.";
 		AbstractEntity instance = null;
@@ -249,7 +249,7 @@ public class EntityUtils {
 		return instance;
 	}
 
-	public static AbstractModel entity2Model(final Class<?> cl)
+	private static AbstractModel entity2Model(final Class<?> cl)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		final String fqn = "br.com.awesome.repository.model.";
 		AbstractModel instance = null;

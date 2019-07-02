@@ -115,14 +115,13 @@ public class GenericRepository<M extends AbstractModel, E extends AbstractEntity
 		
 		@SuppressWarnings("unchecked")
 		List<M> listModel = (List<M>) listEntity.stream().map(e -> {
+			AbstractModel ret = null;
 			try {
-				return EntityUtils.convertToModel(e);
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException
-					| SecurityException | IllegalArgumentException | InvocationTargetException
-					| NoSuchFieldException e1) {
-				e1.printStackTrace();
-				return null;
+				ret = EntityUtils.convert2Model(e);
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
+			return ret;
 		}).collect(Collectors.toList());
 
 		return listModel;
