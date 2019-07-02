@@ -213,6 +213,20 @@ public class EntityUtils {
 		}
 	}
 
+	public static Object model2Entity(final Class<?> cl)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+		final String fqn = "br.com.awesome.repository.entity.";
+		Object instance = null;
+		if (AbstractModel.class.isAssignableFrom(cl)) {
+			String modelName = cl.getName();
+			String entityName = modelName.substring(0, modelName.length() - 5).concat("Entity");
+
+			instance = Class.forName(fqn.concat(entityName)).newInstance();
+		}
+
+		return instance;
+	}
+
 	private static List<String> getClassTransientFields(final Class<?> cl) {
 		List<String> fieldAnnotated = Arrays.stream(cl.getDeclaredFields())
 				.filter(f -> f.isAnnotationPresent(Transient.class)).map(f -> f.getName()).collect(Collectors.toList());

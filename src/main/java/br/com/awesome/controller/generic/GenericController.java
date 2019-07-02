@@ -8,11 +8,13 @@ import java.util.List;
 import javax.enterprise.inject.spi.CDI;
 import javax.persistence.TransactionRequiredException;
 
+import br.com.awesome.exception.AnnotationNotFoundException;
 import br.com.awesome.model.generic.AbstractModel;
+import br.com.awesome.repository.entity.generic.AbstractEntity;
 import br.com.awesome.repository.generic.GenericRepository;
 import br.com.awesome.repository.generic.JpaRepository;
 
-public class GenericController <T extends AbstractModel<T>, Y extends GenericRepository<T, Long>> implements Serializable{
+public class GenericController <T extends AbstractModel, K extends AbstractEntity, Y extends GenericRepository<T, K, Long>> implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -23,10 +25,10 @@ public class GenericController <T extends AbstractModel<T>, Y extends GenericRep
 	protected boolean fetchAll;
 	protected String orderBy = null;
 	private final Class<T> modelClass;
-	private GenericRepository<T, Long> repository;
+	private GenericRepository<T, K, Long> repository;
 	
 	@SuppressWarnings("unchecked")
-	public GenericController() throws ClassNotFoundException {
+	public GenericController() throws ClassNotFoundException, AnnotationNotFoundException {
 		injectRepository();
 		this.modelClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
 				.getActualTypeArguments()[0];
@@ -68,11 +70,13 @@ public class GenericController <T extends AbstractModel<T>, Y extends GenericRep
 	//---------------------------------------------------------------------------------
 	// Private methods
 	
-	private void injectRepository() throws ClassNotFoundException {
+	private void injectRepository() throws ClassNotFoundException, AnnotationNotFoundException {
 		Class<?> cl = this.getClass();
 		if (cl.isAnnotationPresent(JpaRepository.class)) {
 			JpaRepository jpaRepository = cl.getAnnotation(JpaRepository.class);
 			this.repository = findRepo(jpaRepository.name());	
+		} else {
+			throw new AnnotationNotFoundException("Annotation JpaRepository not found in class");
 		}
 	}
 	

@@ -2,7 +2,7 @@ package br.com.awesome.model.generic;
 
 import java.io.Serializable;
 
-public abstract class AbstractModel<T> implements Serializable {
+public abstract class AbstractModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
