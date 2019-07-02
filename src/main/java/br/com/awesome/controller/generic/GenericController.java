@@ -1,6 +1,7 @@
 package br.com.awesome.controller.generic;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,43 +15,43 @@ import br.com.awesome.repository.entity.generic.AbstractEntity;
 import br.com.awesome.repository.generic.GenericRepository;
 import br.com.awesome.repository.generic.JpaRepository;
 
-public class GenericController <T extends AbstractModel, K extends AbstractEntity, Y extends GenericRepository<T, K, Long>> implements Serializable{
+public class GenericController <M extends AbstractModel, E extends AbstractEntity, R extends GenericRepository<M, E, Long>> implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	protected T model, filter;
-	protected Y repo;
-	protected List<T> listData;
-	protected List<T> suggestions;
+	protected M model, filter;
+	protected R repo;
+	protected List<M> listData;
+	protected List<M> suggestions;
 	protected boolean fetchAll;
 	protected String orderBy = null;
-	private final Class<T> modelClass;
-	private GenericRepository<T, K, Long> repository;
+	private final Class<M> modelClass;
+	private GenericRepository<M, E, Long> repository;
 	
 	@SuppressWarnings("unchecked")
 	public GenericController() throws ClassNotFoundException, AnnotationNotFoundException {
 		injectRepository();
-		this.modelClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
+		this.modelClass = (Class<M>) ((ParameterizedType) getClass().getGenericSuperclass())
 				.getActualTypeArguments()[0];
 		try {
-			this.model = (T) (Class.forName(this.modelClass.getCanonicalName()).newInstance());
-			this.filter = (T) (Class.forName(this.modelClass.getCanonicalName()).newInstance());
+			this.model = (M) (Class.forName(this.modelClass.getCanonicalName()).newInstance());
+			this.filter = (M) (Class.forName(this.modelClass.getCanonicalName()).newInstance());
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void save() throws IllegalArgumentException, TransactionRequiredException {
+	public void save() throws IllegalArgumentException, TransactionRequiredException, NoSuchMethodException, SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		this.repository.saveOrUpdate(this.model);
 	}
 	
-	public void delete() throws IllegalArgumentException, TransactionRequiredException {
+	public void delete() throws IllegalArgumentException, TransactionRequiredException, NoSuchMethodException, SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		this.repository.delete(model);
 	}
 	
-	public List<T> getListData() {
+	public List<M> getListData() {
 		if (this.listData == null) {
-			this.listData = new ArrayList<T>();
+			this.listData = new ArrayList<M>();
 		}
 
 		if (this.listData.size() == 0 && this.fetchAll) {
@@ -61,7 +62,7 @@ public class GenericController <T extends AbstractModel, K extends AbstractEntit
 	}
 	
 	public void clear() throws InstantiationException, IllegalAccessException {
-		listData = new ArrayList<T>();
+		listData = new ArrayList<M>();
 		model = this.modelClass.newInstance();
 		filter = this.modelClass.newInstance();
 		fetchAll = true;
@@ -81,27 +82,27 @@ public class GenericController <T extends AbstractModel, K extends AbstractEntit
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Y findRepo(String repoName) throws ClassNotFoundException {
+	private R findRepo(String repoName) throws ClassNotFoundException {
 		String fullQualifiedName = "br.com.awesome.repository." + repoName;
-		return (Y) CDI.current().select(Class.forName(fullQualifiedName)).get();
+		return (R) CDI.current().select(Class.forName(fullQualifiedName)).get();
 	}
 	
 	//---------------------------------------------------------------------------------
 	// Getter's & Setter's
 	
-	public T getModel() {
+	public M getModel() {
 		return this.model;
 	}
 	
-	public void setModel(T model) {
+	public void setModel(M model) {
 		this.model = model;
 	}
 
-	public T getFilter() {
+	public M getFilter() {
 		return this.filter;
 	}
 	
-	public void setFilter(T filter) {
+	public void setFilter(M filter) {
 		this.filter = filter;
 	}
 }

@@ -96,6 +96,49 @@ public class EntityUtils {
 		}
 	}
 
+	public static void copyEntityInherited(final AbstractEntity eSource, final AbstractEntity eTarget)
+			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchFieldException {
+
+		Class<?> clSource = eSource.getClass();
+		Class<?> clTarget = eTarget.getClass();
+
+		if (clSource.equals(clTarget)) {
+
+			List<String> fieldAnnotated = getClassTransientFields(clSource);
+
+			for (Method mSource : clSource.getMethods()) {
+				if (!fieldAnnotated.contains(methodToField(mSource.getName())) && !mSource.getName().equals("getClass")
+						&& methodExists(mSource.getName(), clTarget)) {
+					if (mSource.getName().substring(0, 3).equals("get")
+							|| mSource.getName().substring(0, 2).equals("is")) {
+						if (mSource.invoke(eSource) != null) {
+
+							Method mTarget = null;
+							if (mSource.getName().substring(0, 3).equals("get")) {
+								Class<?> parClass = null;
+								if (Timestamp.class.isAssignableFrom(mSource.invoke(eSource).getClass())) {
+									parClass = Date.class;
+								} else {
+									parClass = mSource.invoke(eSource).getClass();
+								}
+								mTarget = clTarget.getMethod("set".concat(mSource.getName().substring(3)),
+										new Class[] { parClass });
+							} else if (mSource.getName().substring(0, 2).equals("is")) {
+								mTarget = clTarget.getMethod("set".concat(mSource.getName().substring(2)),
+										new Class[] { boolean.class });
+							}
+
+							if (mTarget != null) {
+								mTarget.invoke(eTarget, mSource.invoke(eSource));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public static void copyModel2Entity(final AbstractModel model, final AbstractEntity entity)
 			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, NoSuchFieldException {
@@ -170,58 +213,51 @@ public class EntityUtils {
 		}
 	}
 
-	public static void copyEntityInherited(final AbstractEntity eSource, final AbstractEntity eTarget)
-			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchFieldException {
+	public static AbstractEntity convertToEntity(final AbstractModel model)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException,
+			SecurityException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
+		final Class<?> cl = model.getClass();
+		AbstractEntity entity = model2Entity(cl);
 
-		Class<?> clSource = eSource.getClass();
-		Class<?> clTarget = eTarget.getClass();
+		copyModel2Entity(model, entity);
 
-		if (clSource.equals(clTarget)) {
+		return entity;
+	}
+	
+	public static AbstractModel convertToModel(final AbstractEntity entity)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException,
+			SecurityException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
+		final Class<?> cl = entity.getClass();
+		AbstractModel model = entity2Model(cl);
 
-			List<String> fieldAnnotated = getClassTransientFields(clSource);
+		copyEntity2Model(entity, model);
 
-			for (Method mSource : clSource.getMethods()) {
-				if (!fieldAnnotated.contains(methodToField(mSource.getName()))
-						&& !mSource.getName().equals("getClass")) {
-					if (mSource.getName().substring(0, 3).equals("get")
-							|| mSource.getName().substring(0, 2).equals("is")) {
-						if (mSource.invoke(eSource) != null) {
-
-							Method mTarget = null;
-							if (mSource.getName().substring(0, 3).equals("get")) {
-								Class<?> parClass = null;
-								if (Timestamp.class.isAssignableFrom(mSource.invoke(eSource).getClass())) {
-									parClass = Date.class;
-								} else {
-									parClass = mSource.invoke(eSource).getClass();
-								}
-								mTarget = clTarget.getMethod("set".concat(mSource.getName().substring(3)),
-										new Class[] { parClass });
-							} else if (mSource.getName().substring(0, 2).equals("is")) {
-								mTarget = clTarget.getMethod("set".concat(mSource.getName().substring(2)),
-										new Class[] { boolean.class });
-							}
-
-							if (mTarget != null) {
-								mTarget.invoke(eTarget, mSource.invoke(eSource));
-							}
-						}
-					}
-				}
-			}
-		}
+		return model;
 	}
 
-	public static Object model2Entity(final Class<?> cl)
+	public static AbstractEntity model2Entity(final Class<?> cl)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		final String fqn = "br.com.awesome.repository.entity.";
-		Object instance = null;
+		AbstractEntity instance = null;
 		if (AbstractModel.class.isAssignableFrom(cl)) {
 			String modelName = cl.getName();
 			String entityName = modelName.substring(0, modelName.length() - 5).concat("Entity");
 
-			instance = Class.forName(fqn.concat(entityName)).newInstance();
+			instance = (AbstractEntity) Class.forName(fqn.concat(entityName)).newInstance();
+		}
+
+		return instance;
+	}
+
+	public static AbstractModel entity2Model(final Class<?> cl)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+		final String fqn = "br.com.awesome.repository.model.";
+		AbstractModel instance = null;
+		if (AbstractEntity.class.isAssignableFrom(cl)) {
+			String entityName = cl.getName();
+			String modelName = entityName.substring(0, entityName.length() - 5).concat("Model");
+
+			instance = (AbstractModel) Class.forName(fqn.concat(modelName)).newInstance();
 		}
 
 		return instance;
