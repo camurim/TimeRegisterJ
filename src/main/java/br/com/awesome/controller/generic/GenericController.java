@@ -9,24 +9,29 @@ import java.util.List;
 import javax.enterprise.inject.spi.CDI;
 import javax.persistence.TransactionRequiredException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import br.com.awesome.exception.AnnotationNotFoundException;
 import br.com.awesome.model.generic.AbstractModel;
 import br.com.awesome.repository.entity.generic.AbstractEntity;
 import br.com.awesome.repository.generic.GenericRepository;
 import br.com.awesome.repository.generic.JpaRepository;
 
-public class GenericController <M extends AbstractModel, E extends AbstractEntity, R extends GenericRepository<M, E, Long>> implements Serializable{
+public class GenericController<M extends AbstractModel, E extends AbstractEntity, R extends GenericRepository<M, E, Long>>
+		implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
+	private static final Logger LOG = LogManager.getLogger("GenericController");
+
 	protected M model, filter;
 	protected List<M> listData;
-	protected List<M> suggestions;
 	protected boolean fetchAll;
 	protected String orderBy = null;
 	private final Class<M> modelClass;
 	private GenericRepository<M, E, Long> repository;
-	
+
 	@SuppressWarnings("unchecked")
 	public GenericController() throws ClassNotFoundException, AnnotationNotFoundException {
 		injectRepository();
@@ -39,15 +44,17 @@ public class GenericController <M extends AbstractModel, E extends AbstractEntit
 			e.printStackTrace();
 		}
 	}
-	
-	public void save() throws IllegalArgumentException, TransactionRequiredException, NoSuchMethodException, SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+
+	public void save() throws IllegalArgumentException, TransactionRequiredException, NoSuchMethodException,
+			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		this.repository.saveOrUpdate(this.model);
 	}
-	
-	public void delete() throws IllegalArgumentException, TransactionRequiredException, NoSuchMethodException, SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+
+	public void delete() throws IllegalArgumentException, TransactionRequiredException, NoSuchMethodException,
+			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		this.repository.delete(model);
 	}
-	
+
 	public List<M> getListData() {
 		if (this.listData == null) {
 			this.listData = new ArrayList<M>();
@@ -59,40 +66,41 @@ public class GenericController <M extends AbstractModel, E extends AbstractEntit
 
 		return this.listData;
 	}
-	
+
 	public void clear() throws InstantiationException, IllegalAccessException {
 		listData = new ArrayList<M>();
 		model = this.modelClass.newInstance();
 		filter = this.modelClass.newInstance();
 		fetchAll = true;
 	}
-	
-	//---------------------------------------------------------------------------------
+
+	// ---------------------------------------------------------------------------------
 	// Private methods
-	
+
 	private void injectRepository() throws ClassNotFoundException, AnnotationNotFoundException {
 		Class<?> cl = this.getClass();
 		if (cl.isAnnotationPresent(JpaRepository.class)) {
 			JpaRepository jpaRepository = cl.getAnnotation(JpaRepository.class);
-			this.repository = findRepo(jpaRepository.name());	
+			this.repository = findRepo(jpaRepository.name());
 		} else {
 			throw new AnnotationNotFoundException("Annotation JpaRepository not found in class");
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private R findRepo(String repoName) throws ClassNotFoundException {
+		LOG.info("Repository Name: ".concat(repoName));
 		String fullQualifiedName = "br.com.awesome.repository." + repoName;
 		return (R) CDI.current().select(Class.forName(fullQualifiedName)).get();
 	}
-	
-	//---------------------------------------------------------------------------------
+
+	// ---------------------------------------------------------------------------------
 	// Getter's & Setter's
-	
+
 	public M getModel() {
 		return this.model;
 	}
-	
+
 	public void setModel(M model) {
 		this.model = model;
 	}
@@ -100,7 +108,7 @@ public class GenericController <M extends AbstractModel, E extends AbstractEntit
 	public M getFilter() {
 		return this.filter;
 	}
-	
+
 	public void setFilter(M filter) {
 		this.filter = filter;
 	}

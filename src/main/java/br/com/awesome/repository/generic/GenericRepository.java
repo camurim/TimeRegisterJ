@@ -18,6 +18,7 @@ import javax.transaction.Transactional;
 
 import br.com.awesome.model.generic.AbstractModel;
 import br.com.awesome.repository.entity.generic.AbstractEntity;
+import br.com.awesome.utils.CriteriaFacade;
 import br.com.awesome.utils.EntityUtils;
 import br.com.awesome.utils.JPAUtils;
 
@@ -62,7 +63,7 @@ public class GenericRepository<M extends AbstractModel, E extends AbstractEntity
 		EntityUtils.copyModel2Entity(object, entity);
 
 		getEntityManager().persist(entity);
-
+		
 		return entity;
 	}
 
@@ -137,5 +138,9 @@ public class GenericRepository<M extends AbstractModel, E extends AbstractEntity
 
 	public EntityManager getEntityManager() {
 		return JPAUtils.JpaEntityManager();
+	}
+
+	public CriteriaFacade<M, E> getCriteria() {
+		return new CriteriaFacade<>(getEntityManager());
 	}
 }
