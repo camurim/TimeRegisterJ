@@ -11,10 +11,15 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Transient;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import br.com.awesome.model.generic.AbstractModel;
 import br.com.awesome.repository.entity.generic.AbstractEntity;
 
 public class EntityUtils {
+	private static final Logger LOG = LogManager.getLogger("GenericController");
+	
 	public static boolean compareEntities(final AbstractEntity eSource, final AbstractEntity eTarget)
 			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
@@ -243,6 +248,7 @@ public class EntityUtils {
 		if (AbstractModel.class.isAssignableFrom(cl)) {
 			String modelName = cl.getName();
 			String entityName = modelName.substring(0, modelName.length() - 5).concat("Entity");
+			LOG.info(entityName);
 
 			instance = (AbstractEntity) Class.forName(fqn.concat(entityName)).newInstance();
 		}
@@ -257,6 +263,7 @@ public class EntityUtils {
 		if (AbstractEntity.class.isAssignableFrom(cl)) {
 			String entityName = cl.getName();
 			String modelName = entityName.substring(0, entityName.length() - 5).concat("Model");
+			LOG.info(modelName);
 
 			instance = (AbstractModel) Class.forName(fqn.concat(modelName)).newInstance();
 		}
