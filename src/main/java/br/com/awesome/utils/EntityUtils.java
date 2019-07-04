@@ -262,7 +262,7 @@ public class EntityUtils {
 		AbstractModel instance = null;
 		if (AbstractEntity.class.isAssignableFrom(cl)) {
 			String entityName = cl.getName();
-			String modelName = entityName.substring(0, entityName.length() - 5).concat("Model");
+			String modelName = entityName.substring(0, entityName.length() - 6).concat("Model");
 			LOG.info(modelName);
 
 			instance = (AbstractModel) Class.forName(fqn.concat(modelName)).newInstance();
