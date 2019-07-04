@@ -20,8 +20,8 @@ public class EntityUtils {
 			InvocationTargetException {
 		boolean ret = true;
 
-		Class<?> clSource = eSource.getClass();
-		Class<?> clTarget = eTarget.getClass();
+		final Class<?> clSource = eSource.getClass();
+		final Class<?> clTarget = eTarget.getClass();
 
 		if (clSource.equals(clTarget)) {
 
@@ -58,8 +58,8 @@ public class EntityUtils {
 			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, NoSuchFieldException {
 
-		Class<?> clSource = eSource.getClass();
-		Class<?> clTarget = eTarget.getClass();
+		final Class<?> clSource = eSource.getClass();
+		final Class<?> clTarget = eTarget.getClass();
 
 		if (clSource.equals(clTarget)) {
 
@@ -100,8 +100,8 @@ public class EntityUtils {
 			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, NoSuchFieldException {
 
-		Class<?> clSource = eSource.getClass();
-		Class<?> clTarget = eTarget.getClass();
+		final Class<?> clSource = eSource.getClass();
+		final Class<?> clTarget = eTarget.getClass();
 
 		if (clSource.equals(clTarget)) {
 
@@ -143,8 +143,8 @@ public class EntityUtils {
 			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, NoSuchFieldException {
 
-		Class<?> clSource = model.getClass();
-		Class<?> clTarget = entity.getClass();
+		final Class<?> clSource = model.getClass();
+		final Class<?> clTarget = entity.getClass();
 
 		for (Method mSource : clSource.getDeclaredMethods()) {
 			if (methodExists(mSource.getName(), clTarget)) {
@@ -179,9 +179,9 @@ public class EntityUtils {
 			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, NoSuchFieldException {
 
-		Class<?> clSource = entity.getClass();
-		Class<?> clTarget = model.getClass();
-
+		final Class<?> clSource = entity.getClass();
+		final Class<?> clTarget = model.getClass();
+		
 		List<String> fieldAnnotated = getClassTransientFields(clSource);
 
 		for (Method mSource : clSource.getDeclaredMethods()) {

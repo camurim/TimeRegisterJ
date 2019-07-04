@@ -46,12 +46,12 @@ public class GenericController<M extends AbstractModel, E extends AbstractEntity
 	}
 
 	public void save() throws IllegalArgumentException, TransactionRequiredException, NoSuchMethodException,
-			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException, InstantiationException {
 		this.repository.saveOrUpdate(this.model);
 	}
 
 	public void delete() throws IllegalArgumentException, TransactionRequiredException, NoSuchMethodException,
-			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException, InstantiationException {
 		this.repository.delete(model);
 	}
 

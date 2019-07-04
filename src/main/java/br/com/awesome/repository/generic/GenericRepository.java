@@ -24,15 +24,18 @@ import br.com.awesome.utils.JPAUtils;
 
 public class GenericRepository<M extends AbstractModel, E extends AbstractEntity, ID extends Number> {
 	private final Class<E> entityClass;
+	private final Class<M> modelClass;
 
 	@SuppressWarnings("unchecked")
 	public GenericRepository() {
+		this.modelClass = (Class<M>) ((ParameterizedType) getClass().getGenericSuperclass())
+				.getActualTypeArguments()[0];
 		this.entityClass = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
 				.getActualTypeArguments()[1];
 	}
 
 	public M findById(ID id) throws NoSuchMethodException, SecurityException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
+			IllegalArgumentException, InvocationTargetException, NoSuchFieldException, InstantiationException {
 		EntityManager entityManager = getEntityManager();
 		List<E> result = new ArrayList<>();
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -47,7 +50,7 @@ public class GenericRepository<M extends AbstractModel, E extends AbstractEntity
 
 		result = typedQuery.getResultList();
 
-		M model = null;
+		M model = this.modelClass.newInstance();
 
 		EntityUtils.copyEntity2Model(result.get(0), model);
 
@@ -57,8 +60,8 @@ public class GenericRepository<M extends AbstractModel, E extends AbstractEntity
 	@Transactional
 	public E save(M object)
 			throws EntityExistsException, IllegalArgumentException, TransactionRequiredException, NoSuchMethodException,
-			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
-		E entity = null;
+			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException, InstantiationException {
+		E entity = this.entityClass.newInstance();
 
 		EntityUtils.copyModel2Entity(object, entity);
 
@@ -69,8 +72,8 @@ public class GenericRepository<M extends AbstractModel, E extends AbstractEntity
 
 	@Transactional
 	public E update(M object) throws IllegalArgumentException, TransactionRequiredException, NoSuchMethodException,
-			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
-		E entity = null;
+			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException, InstantiationException {
+		E entity = this.entityClass.newInstance();
 
 		EntityUtils.copyModel2Entity(object, entity);
 
@@ -80,8 +83,8 @@ public class GenericRepository<M extends AbstractModel, E extends AbstractEntity
 	@Transactional
 	public E saveOrUpdate(M object)
 			throws IllegalArgumentException, TransactionRequiredException, NoSuchMethodException, SecurityException,
-			IllegalAccessException, InvocationTargetException, NoSuchFieldException {
-		E entity = null;
+			IllegalAccessException, InvocationTargetException, NoSuchFieldException, InstantiationException {
+		E entity = this.entityClass.newInstance();
 
 		EntityUtils.copyModel2Entity(object, entity);
 
@@ -95,8 +98,8 @@ public class GenericRepository<M extends AbstractModel, E extends AbstractEntity
 
 	@Transactional
 	public void delete(M object) throws IllegalArgumentException, TransactionRequiredException, NoSuchMethodException,
-			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
-		E entity = null;
+			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchFieldException, InstantiationException {
+		E entity = this.entityClass.newInstance();
 
 		EntityUtils.copyModel2Entity(object, entity);
 
